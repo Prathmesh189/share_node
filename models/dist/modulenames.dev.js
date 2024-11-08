@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -19,36 +19,40 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 var _require = require('sequelize'),
-    Model = _require.Model;
+    Model = _require.Model,
+    DataTypes = _require.DataTypes;
 
 module.exports = function (sequelize, DataTypes) {
-  var moduleNames =
+  var ModuleNames =
   /*#__PURE__*/
   function (_Model) {
-    _inherits(moduleNames, _Model);
+    _inherits(ModuleNames, _Model);
 
-    function moduleNames() {
-      _classCallCheck(this, moduleNames);
+    function ModuleNames() {
+      _classCallCheck(this, ModuleNames);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(moduleNames).apply(this, arguments));
+      return _possibleConstructorReturn(this, _getPrototypeOf(ModuleNames).apply(this, arguments));
     }
 
-    _createClass(moduleNames, null, [{
+    _createClass(ModuleNames, null, [{
       key: "associate",
-      value: function associate(models) {// Define the relationship between moduleNames and syallabus
+      value: function associate(models) {// Add associations here
       }
     }]);
 
-    return moduleNames;
+    return ModuleNames;
   }(Model);
 
-  moduleNames.init({
+  ModuleNames.init({
     course_id: DataTypes.INTEGER,
     module_id: DataTypes.INTEGER,
     moduleNames: DataTypes.STRING
   }, {
     sequelize: sequelize,
-    modelName: 'moduleNames'
+    modelName: 'ModuleNames',
+    // Model name should be capitalized here
+    tableName: 'modulenames' // Make sure the table name matches the actual database table
+
   });
-  return moduleNames;
+  return ModuleNames;
 };

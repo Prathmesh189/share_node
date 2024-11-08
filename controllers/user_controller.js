@@ -46,28 +46,28 @@ const uploadProfileImage = async (req, res) => {
 
 const loginUser = async (req, res) => {
 
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ status: 0, message: 'Validation failed.', errors: errors.array() });
-    }
-
     try {
-        const { phone, password } = req.body;
+        const { phone, Email, password } = req.body;
 
-        console.log("h");
-        console.log(phone );
+        console.log("Login attempt with phone/email:", phone, Email);
 
-        
-
-        if (!phone || !password) {
-            return res.status(404).json({ status: 0, message: 'Phone number and password are required.' });
+        if (!phone && !Email) {
+            return res.status(404).json({ status: 0, message: 'Phone number or email is required.' });
         }
-        
-        const user = await users.findOne({ where: { phone } });
-        
+
+        if (!password) {
+            return res.status(404).json({ status: 0, message: 'Password is required.' });
+        }
+
+        let user;
+        if (Email) {
+            user = await users.findOne({ where: { Email } });
+        } else if (phone) {
+            user = await users.findOne({ where: { phone } });
+        }
+
         if (!user) {
-            return res.status(404).json({ status: 0, message: 'User not found with this phone number.' });
+            return res.status(404).json({ status: 0, message: 'User not found with this email or phone number.' });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -77,7 +77,7 @@ const loginUser = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: user.id, phone: user.phone },
+            { id: user.id, phone: user.phone, email: user.email },
             jwtSecret,
             { expiresIn: 31536000 } 
         );
@@ -90,6 +90,7 @@ const loginUser = async (req, res) => {
                 id: user.id,
                 name: user.name,
                 phone: user.phone,
+                Email: user.Email,
             },
         });
     } catch (error) {
@@ -102,22 +103,32 @@ const loginUser = async (req, res) => {
     }
 };
 
+
 const createUser = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ status: 0, message: 'Validation failed.', errors: errors.array() });
     }
 
-    
     try {
-        const { name, Email,phone, password } = req.body;
+        const { name, Email, phone, password } = req.body;
 
-    console.log(password);
+        console.log(password);
 
-        if (!name || !phone || !password) {
+        if (!name || !phone || !password || !Email) {
             return res.status(400).json({ status: 0, message: 'All fields are required.' });
         }
 
+        // Check if the email is already registered
+        const existingEmail = await users.findOne({ where: { Email } });
+        if (existingEmail) {
+            return res.status(400).json({
+                status: 0,
+                message: 'Email is already registered. Please use a different email.',
+            });
+        }
+
+        // Check if the phone is already registered
         const existingUser = await users.findOne({ where: { phone } });
         if (existingUser) {
             return res.status(400).json({
@@ -126,12 +137,14 @@ const createUser = async (req, res) => {
             });
         }
 
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Create the new user
         const newUserEntry = await users.create({
             name,
             phone,
-            Email,
+            Email, 
             password: hashedPassword,
         });
 
@@ -140,9 +153,9 @@ const createUser = async (req, res) => {
             message: 'User created successfully',
             user_info: {
                 id: newUserEntry.id,
-                name: newUserEntry.name,
                 phone: newUserEntry.phone,
-                Email: newUserEntry.Email,
+                Email: newUserEntry.Email, 
+                name: newUserEntry.name
             },
         });
     } catch (error) {
@@ -157,8 +170,10 @@ const createUser = async (req, res) => {
 
 const getUserInfo = async (req, res) => {
     try {
-        const userId = 11
-        ;
+        const userId = req.user?.id; 
+        
+        console.log(userId);
+
         const user = await users.findByPk(userId);
         if (!user) {
             return res.status(404).json({ status: 0, message: 'User not found.' });
@@ -185,41 +200,55 @@ const updateUser = async (req, res) => {
     }
 
     try {
-        const userId = req.user.id;
-        const { name, phone, password, bod, profile_pic, subscriptionId } = req.body;
+        console.log("Decoded user from token:", req.user);
 
+        const userId = req.user?.id; 
+        if (!userId) {
+            return res.status(401).json({ status: 0, message: 'User ID not found in token.' });
+        }
+
+        const { name, Email, phone, password, bod, profile_pic, subscriptionId } = req.body;
+        const updatedFields = {};
+
+        if (name) updatedFields.name = name;
+        if (Email) updatedFields.Email = Email;
+        if (phone) updatedFields.phone = phone;
+        if (bod) updatedFields.bod = bod;
+        if (profile_pic) updatedFields.profile_pic = profile_pic;
+        if (subscriptionId) updatedFields.subscriptionId = subscriptionId;
+        
+        if (password) {
+            // If password is provided, hash it before updating
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updatedFields.password = hashedPassword;
+        }
+
+        // Find the user by the extracted user ID
         const user = await users.findByPk(userId);
 
         if (!user) {
             return res.status(404).json({ status: 0, message: 'User not found.' });
         }
 
-        const updatedFields = {};
-        if (name) updatedFields.name = name;
-        if (phone) updatedFields.phone = phone;
-        if (bod) updatedFields.bod = bod; 
-        if (profile_pic) updatedFields.profile_pic = profile_pic;
-        if (subscriptionId) updatedFields.subscriptionId = subscriptionId; 
-        if (password) {
-            updatedFields.password = await bcrypt.hash(password, 10); 
-        }
-
+        // Update the user with the fields that are provided
         await user.update(updatedFields);
 
+        // Return the updated user information
         res.status(200).json({
             status: 1,
-            message: 'User information updated successfully.',
+            message: 'User updated successfully.',
             user_info: {
                 id: user.id,
                 name: user.name,
                 phone: user.phone,
+                Email: user.Email,
                 bod: user.bod,
-                profile_pic: user.profile_pic, 
+                profile_pic: user.profile_pic,
                 subscriptionId: user.subscriptionId,
             },
         });
     } catch (error) {
-        console.error('Error updating user info:', error);
+        console.error('Error updating user:', error);
         res.status(500).json({
             status: 0,
             message: 'Something went wrong',
@@ -228,9 +257,11 @@ const updateUser = async (req, res) => {
     }
 };
 
+
 const updatePassword = async (req, res) => {
     const errors = validationResult(req);
 
+    // Validate the input data
     if (!errors.isEmpty()) {
         return res.status(400).json({ 
             status: 0, 
@@ -240,28 +271,35 @@ const updatePassword = async (req, res) => {
     }
 
     try {
-        const { phone, password } = req.body;
+        // Extract phone and new password from the request body
+        const { Email, password } = req.body;
 
-        if (!phone || !password) {
+        // Ensure phone number and new password are provided
+        if (!Email || !password) {
             return res.status(404).json({ 
                 status: 0, 
-                message: 'Phone number and password are required.' 
+                message: 'Email and new password are required.' 
             });
         }
 
-        const user = await users.findOne({ where: { phone: phone } });
+        // Find the user based on the phone number
+        const user = await users.findOne({ where: { Email } });
 
+        // Check if the user exists
         if (!user) {
             return res.status(404).json({ 
                 status: 0, 
-                message: 'User not found.' 
+                message: 'User not found with this Email.' 
             });
         }
 
+        // Hash the new password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Update the user's password with the hashed password
         await user.update({ password: hashedPassword });
 
+        // Respond with a success message and the updated user info (excluding password)
         res.status(200).json({
             status: 1,
             message: 'Password reset successfully.',
@@ -283,6 +321,7 @@ const updatePassword = async (req, res) => {
         });
     }
 };
+
 
 
 module.exports = {

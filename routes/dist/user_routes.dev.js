@@ -15,7 +15,7 @@ var upload = require('../config/multer_config');
 router.put('/uploadProfileImage', authenticateJWT, upload.single('profile_pic'), validations.trail, userController.uploadProfileImage);
 router.post('/register', userController.createUser);
 router.post('/login', validations.loginUserValidation, userController.loginUser);
-router.get('/details', userController.getUserInfo);
+router.get('/details', authenticateJWT, userController.getUserInfo);
 router.put('/update', authenticateJWT, userController.updateUser);
 router.patch('/resetPassword', validations.updatePassword, userController.updatePassword);
 module.exports = router;

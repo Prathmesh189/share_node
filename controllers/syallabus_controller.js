@@ -1,4 +1,4 @@
-const { syallabus, moduleNames } = require('../models');
+const { syallabus, ModuleNames } = require('../models');
 const path = require('path');
 const fs = require('fs');
 
@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const getAllModuleNames = async (req, res) => {
   try {
-    const modules = await moduleNames.findAll();
+    const modules = await ModuleNames.findAll();
 
     const formattedModules = await Promise.all(modules.map(async (module) => {
       const syllabusData = await syallabus.findAll({

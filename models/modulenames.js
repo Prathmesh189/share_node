@@ -1,17 +1,13 @@
-'use strict';
-const { Model } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class moduleNames extends Model {
-
-
+  class ModuleNames extends Model {
     static associate(models) {
-      // Define the relationship between moduleNames and syallabus
-     
+      // Add associations here
     }
   }
 
-  moduleNames.init(
+  ModuleNames.init(
     {
       course_id: DataTypes.INTEGER,
       module_id: DataTypes.INTEGER,
@@ -19,9 +15,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'moduleNames',
+      modelName: 'ModuleNames', // Model name should be capitalized here
+      tableName: 'modulenames', // Make sure the table name matches the actual database table
     }
   );
 
-  return moduleNames;
+  return ModuleNames;
 };
