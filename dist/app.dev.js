@@ -16,6 +16,8 @@ console.log("App.js file");
 
 var userRoutes = require('./routes/user_routes');
 
+var adminRoutes = require('./routes/admin_routes');
+
 var syallbus = require('./routes/syallabus_routes');
 
 var terms_condn = require('./routes/terms_condn');
@@ -28,4 +30,5 @@ app.get('/', function (req, res) {
 app.use("/api/users", userRoutes);
 app.use("/api/syallbus", syallbus);
 app.use("/api/terms-privacy", terms_condn);
+app.use("/api/admin", adminRoutes);
 module.exports = app;

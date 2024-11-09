@@ -15,6 +15,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 console.log("App.js file");
 
 const userRoutes = require('./routes/user_routes')
+const adminRoutes = require('./routes/admin_routes')
 const syallbus = require('./routes/syallabus_routes')
 const terms_condn = require('./routes/terms_condn')
 
@@ -25,5 +26,6 @@ app.get('/' ,(req,res)=> {
 app.use("/api/users",userRoutes);
 app.use("/api/syallbus",syallbus);
 app.use("/api/terms-privacy",terms_condn);
+app.use("/api/admin",adminRoutes);
 
 module.exports = app;
