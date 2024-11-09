@@ -122,7 +122,7 @@ const createUser = async (req, res) => {
         // Check if the email is already registered
         const existingEmail = await users.findOne({ where: { Email } });
         if (existingEmail) {
-            return res.status(400).json({
+            return res.status(200).json({
                 status: 0,
                 message: 'Email is already registered. Please use a different email.',
             });
@@ -131,7 +131,7 @@ const createUser = async (req, res) => {
         // Check if the phone is already registered
         const existingUser = await users.findOne({ where: { phone } });
         if (existingUser) {
-            return res.status(400).json({
+            return res.status(200).json({
                 status: 0,
                 message: 'Phone number is already registered. Please use a different number.',
             });
