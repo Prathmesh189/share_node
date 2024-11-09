@@ -16,7 +16,9 @@ var getPrivacyAndTerms = function getPrivacyAndTerms(req, res) {
 
         case 3:
           privacyAndTerms = _context.sent;
-          res.status(200).json(privacyAndTerms);
+          res.status(200).json({
+            privacyAndTerms: privacyAndTerms
+          });
           _context.next = 10;
           break;
 

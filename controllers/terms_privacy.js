@@ -4,7 +4,7 @@ const { privacy_and_terms } = require('../models');
 const getPrivacyAndTerms = async (req, res) => {
   try {
     const privacyAndTerms = await privacy_and_terms.findAll();
-    res.status(200).json(privacyAndTerms);
+    res.status(200).json({privacyAndTerms});
   } catch (error) {
     res.status(500).json({ error: 'Failed to retrieve privacy and terms' });
   }
