@@ -206,6 +206,8 @@ const updateUser = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ status: 0, message: 'User ID not found in token.' });
         }
+        console.log("userId is");
+        console.log(userId);
 
         const { name, Email, phone, password, bod, profile_pic, subscriptionId } = req.body;
         const updatedFields = {};
@@ -217,7 +219,6 @@ const updateUser = async (req, res) => {
         if (profile_pic) updatedFields.profile_pic = profile_pic;
         if (subscriptionId) updatedFields.subscriptionId = subscriptionId;
         
-        console.log(subscriptionId);
         console.log(subscriptionId);
         console.log(subscriptionId);
         console.log(subscriptionId);
