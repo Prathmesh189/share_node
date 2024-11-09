@@ -124,7 +124,7 @@ const createUser = async (req, res) => {
         if (existingEmail) {
             return res.status(200).json({
                 status: 0,
-                message: 'Email is already registered. Please use a different email.',
+                message: 'Email is already registered. Please use a different email to Register .',
             });
         }
 
@@ -150,7 +150,7 @@ const createUser = async (req, res) => {
 
         res.status(201).json({
             status: 1,
-            message: 'User created successfully',
+            message: 'User created successfully you can login with your Credentials',
             user_info: {
                 id: newUserEntry.id,
                 phone: newUserEntry.phone,
