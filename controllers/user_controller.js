@@ -217,13 +217,15 @@ const updateUser = async (req, res) => {
         if (profile_pic) updatedFields.profile_pic = profile_pic;
         if (subscriptionId) updatedFields.subscriptionId = subscriptionId;
         
+        console.log(subscriptionId);
+        console.log(subscriptionId);
+        console.log(subscriptionId);
+        console.log(subscriptionId);
         if (password) {
-            // If password is provided, hash it before updating
             const hashedPassword = await bcrypt.hash(password, 10);
             updatedFields.password = hashedPassword;
         }
 
-        // Find the user by the extracted user ID
         const user = await users.findByPk(userId);
 
         if (!user) {
