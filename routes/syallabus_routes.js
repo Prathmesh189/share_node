@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
-const { createSyllabus,  getAllModuleNames  , getAllSyllabi, createSyllabusbyLinks, getByCourse } = require('../controllers/syallabus_controller');
+const { editSyllabus,createSyllabus,  getAllModuleNames  , getAllSyllabi, createSyllabusbyLinks, getByCourse } = require('../controllers/syallabus_controller');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -26,7 +26,17 @@ const upload = multer({ storage });
 
 router.post('/create', upload.fields([{ name: 'audio' ,maxCount:1}, { name: 'document' }]), createSyllabus);
 
+router.put(
+  '/edit/:id', 
+  upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'document', maxCount: 1 }]), 
+  editSyllabus
+);
+
+
 router.post('/createLink', createSyllabusbyLinks);
+
+
+
 
 router.get('/get', getAllSyllabi);
 

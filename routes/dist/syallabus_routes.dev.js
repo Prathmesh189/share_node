@@ -9,6 +9,7 @@ var path = require('path');
 var router = express.Router();
 
 var _require = require('../controllers/syallabus_controller'),
+    editSyllabus = _require.editSyllabus,
     createSyllabus = _require.createSyllabus,
     getAllModuleNames = _require.getAllModuleNames,
     getAllSyllabi = _require.getAllSyllabi,
@@ -39,6 +40,13 @@ router.post('/create', upload.fields([{
 }, {
   name: 'document'
 }]), createSyllabus);
+router.put('/edit/:id', upload.fields([{
+  name: 'audio',
+  maxCount: 1
+}, {
+  name: 'document',
+  maxCount: 1
+}]), editSyllabus);
 router.post('/createLink', createSyllabusbyLinks);
 router.get('/get', getAllSyllabi);
 router.get('/begginer/:course_id', getByCourse);

@@ -71,6 +71,45 @@ const createSyllabus = async (req, res) => {
 };
 
 
+const editSyllabus = async (req, res) => {
+  try {
+    const { course_id, chapter_id, module_id, chapter_name } = req.body;
+    const id = req.params.id;
+
+    // Check for uploaded files
+    const audioFile = req.files?.audio?.[0];
+    const documentFile = req.files?.document?.[0];
+
+    // Find the syllabus by ID
+    const syllabusEntry = await syallabus.findByPk(id);
+
+    if (!syllabusEntry) {
+      return res.status(404).json({ message: 'Syllabus not found' });
+    }
+
+    // Build the update object dynamically
+    const updateData = {};
+    if (course_id) updateData.course_id = course_id;
+    if (chapter_id) updateData.chapter_id = chapter_id;
+    if (module_id) updateData.module_id = module_id;
+    if (chapter_name) updateData.chapter_name = chapter_name;
+    if (audioFile) updateData.audiopath = audioFile.path;
+    if (documentFile) updateData.pdfpath = documentFile.path;
+
+    // Perform the update
+    await syllabusEntry.update(updateData);
+
+    res.status(200).json({
+      message: 'Syllabus updated successfully',
+      data: syllabusEntry,
+    });
+  } catch (error) {
+    console.error('Error updating syllabus:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
 const createSyllabusbyLinks = async (req, res) => {
   try {
     const { course_id, chapter_id, module_id, chapter_name, audiopath, pdfpath } = req.body;
@@ -106,13 +145,6 @@ const getAllSyllabi = async (req, res) => {
     if (!data || data.length === 0) {
       return res.status(404).json({ message: 'No syllabus found' });
     }
-
-    // const baseUrl = `${req.protocol}://${req.get('host')}`;
-    // const responseData = data.map(item => ({
-    //   ...item.toJSON(),
-    //   audioUrl: item.audiopath ? `${baseUrl}/${item.audiopath.replace(/\\/g, '/')}` : null,
-    //   documentUrl: item.pdfpath ? `${baseUrl}/${item.pdfpath.replace(/\\/g, '/')}` : null
-    // }));
 
     res.status(200).json({
       message: 'Syllabi fetched successfully',
@@ -217,6 +249,7 @@ const getAllbyCourse = async (req, res) => {
 module.exports = {
   createSyllabus,
   getAllSyllabi,
+  editSyllabus,
   getByCourse,
   createSyllabusbyLinks,
   getAllbyCourse,
