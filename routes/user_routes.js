@@ -15,7 +15,7 @@ const razorpay = new Razorpay({
   
 
   router.post('/create-order',  async (req, res) => {
-    const { amount, currency } = req.body;
+    const { amount } = req.body;
   
     // Input validation
     if (!amount || !currency) {
@@ -26,11 +26,11 @@ const razorpay = new Razorpay({
       return res.status(400).json({ message: "Invalid amount." });
     }
   
-    // Try to create a Razorpay order
+   
     try {
       const order = await razorpay.orders.create({
         amount: amount * 100, // Amount in the smallest currency unit (e.g., paisa for INR)
-        currency: currency,
+        currency: "INR",
         receipt: `receipt_${Math.random()}`,
       });
   

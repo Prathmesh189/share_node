@@ -19,13 +19,12 @@ var razorpay = new Razorpay({
   key_secret: 'rPTGdf5UWXdfuwT3g84W34Zy'
 });
 router.post('/create-order', function _callee(req, res) {
-  var _req$body, amount, currency, order;
-
+  var amount, order;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          _req$body = req.body, amount = _req$body.amount, currency = _req$body.currency; // Input validation
+          amount = req.body.amount; // Input validation
 
           if (!(!amount || !currency)) {
             _context.next = 3;
@@ -52,7 +51,7 @@ router.post('/create-order', function _callee(req, res) {
           return regeneratorRuntime.awrap(razorpay.orders.create({
             amount: amount * 100,
             // Amount in the smallest currency unit (e.g., paisa for INR)
-            currency: currency,
+            currency: "INR",
             receipt: "receipt_".concat(Math.random())
           }));
 
