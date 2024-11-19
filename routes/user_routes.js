@@ -18,23 +18,23 @@ const razorpay = new Razorpay({
     const { amount } = req.body;
   
     // Input validation
-    if (!amount || !currency) {
-      return res.status(400).json({ message: "Amount and currency are required." });
+    if (!amount ) {
+      return res.status(400).json({ status:0, message: "Amount  are required." });
     }
   
     if (isNaN(amount) || amount <= 0) {
-      return res.status(400).json({ message: "Invalid amount." });
+      return res.status(400).json({ status:0,message: "Invalid amount." });
     }
   
    
     try {
       const order = await razorpay.orders.create({
-        amount: amount * 100, // Amount in the smallest currency unit (e.g., paisa for INR)
+        amount: amount * 100,
         currency: "INR",
         receipt: `receipt_${Math.random()}`,
       });
   
-      res.status(200).json(order);
+      res.status(200).json({status:1,order});
     } catch (error) {
       console.error("Error creating Razorpay order:", error); // Log the error for debugging
       res.status(500).json({ message: error.message });

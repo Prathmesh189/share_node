@@ -26,13 +26,14 @@ router.post('/create-order', function _callee(req, res) {
         case 0:
           amount = req.body.amount; // Input validation
 
-          if (!(!amount || !currency)) {
+          if (amount) {
             _context.next = 3;
             break;
           }
 
           return _context.abrupt("return", res.status(400).json({
-            message: "Amount and currency are required."
+            status: 0,
+            message: "Amount  are required."
           }));
 
         case 3:
@@ -42,6 +43,7 @@ router.post('/create-order', function _callee(req, res) {
           }
 
           return _context.abrupt("return", res.status(400).json({
+            status: 0,
             message: "Invalid amount."
           }));
 
@@ -50,14 +52,16 @@ router.post('/create-order', function _callee(req, res) {
           _context.next = 8;
           return regeneratorRuntime.awrap(razorpay.orders.create({
             amount: amount * 100,
-            // Amount in the smallest currency unit (e.g., paisa for INR)
             currency: "INR",
             receipt: "receipt_".concat(Math.random())
           }));
 
         case 8:
           order = _context.sent;
-          res.status(200).json(order);
+          res.status(200).json({
+            status: 1,
+            order: order
+          });
           _context.next = 16;
           break;
 
