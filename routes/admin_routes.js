@@ -8,4 +8,4 @@ router.put('/adminDetails/:id', adminDetailsController.updateAdminDetail);
 
 router.get('/fetch/:id', adminDetailsController.getAdminDetailById);
 
-module.exports = router;
+module.exports = router;    

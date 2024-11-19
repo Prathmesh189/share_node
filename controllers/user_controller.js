@@ -3,45 +3,69 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const { jwtSecret } = require('../config/auth');
+const axios = require('axios'); 
+const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID || '74300621506424';
+const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET || '7312ae27612b59036866ff3f1f69356b';
 
 
-const uploadProfileImage = async (req, res) => {
+const loginWithFacebook = async (facebookToken) => {
     try {
-        const userId = req.user.id;
+        // Verify Facebook token
+        const fbResponse = await axios.get(
+            `https://graph.facebook.com/me?fields=id,name,email&access_token=874300621506424|SnqVT8nsrV1_3iTdaQe9IHyZWNk`
+        );
 
-        // Check if file is uploaded
-        if (!req.file) {
-            return res.status(400).json({ status: 0, message: 'Profile image is required.' });
+        const { id, name, email } = fbResponse.data;
+
+        if (!id) {
+            return { 
+                status: 0, 
+                message: 'Invalid Facebook token.' 
+            };
         }
 
-        const user = await users.findByPk(userId);
+        // Check if user exists in the database
+        let user = await users.findOne({ where: { Email: email } });
+
         if (!user) {
-            return res.status(404).json({ status: 0, message: 'User not found.' });
+            // Create a new user if they don't exist
+            user = await users.create({
+                name,
+                Email: email,
+                facebookId: id,
+            });
         }
 
-        // Update user's profile image path in the database
-        const profileImagePath = req.file.path; // Get the file path
-        await user.update({ profile_pic: profileImagePath });
+        // Generate JWT token
+        const token = jwt.sign(
+            { id: user.id, phone: user.phone, Email: user.Email },
+            jwtSecret,
+            { expiresIn: '1y' }
+        );
 
-        res.status(200).json({
+        return {
             status: 1,
-            message: 'Profile image uploaded successfully.',
+            message: 'Facebook login successful',
+            token,
             user_info: {
                 id: user.id,
                 name: user.name,
                 phone: user.phone,
-                profile_pic: profileImagePath, // Return updated profile picture URL
+                Email: user.Email,
             },
-        });
+        };
     } catch (error) {
-        console.error('Error uploading profile image:', error);
-        res.status(500).json({
-            status: 0,
-            message: 'Something went wrong',
-            error: error.message,
-        });
+        console.error('Error during Facebook login:', error.message);
+        return { 
+            status: 0, 
+            message: 'Error during Facebook login', 
+            error: error.message 
+        };
     }
 };
+
+
+
 
 
 const loginUser = async (req, res) => {
@@ -102,6 +126,49 @@ const loginUser = async (req, res) => {
         });
     }
 };
+
+
+
+
+const uploadProfileImage = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Check if file is uploaded
+        if (!req.file) {
+            return res.status(400).json({ status: 0, message: 'Profile image is required.' });
+        }
+
+        const user = await users.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ status: 0, message: 'User not found.' });
+        }
+
+        // Update user's profile image path in the database
+        const profileImagePath = req.file.path; // Get the file path
+        await user.update({ profile_pic: profileImagePath });
+
+        res.status(200).json({
+            status: 1,
+            message: 'Profile image uploaded successfully.',
+            user_info: {
+                id: user.id,
+                name: user.name,
+                phone: user.phone,
+                profile_pic: profileImagePath, // Return updated profile picture URL
+            },
+        });
+    } catch (error) {
+        console.error('Error uploading profile image:', error);
+        res.status(500).json({
+            status: 0,
+            message: 'Something went wrong',
+            error: error.message,
+        });
+    }
+};
+
+
 
 
 const createUser = async (req, res) => {
@@ -333,5 +400,6 @@ module.exports = {
     updateUser,
     getUserInfo,
     uploadProfileImage,
-    updatePassword
+    updatePassword,
+    loginWithFacebook
 };

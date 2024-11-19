@@ -4,6 +4,7 @@ var _require = require('express-validator'),
     body = _require.body,
     validationResult = _require.validationResult;
 
+var razarPayValidations = [body('amount').notEmpty().withMessage('amount must be entered'), body('currency').notEmpty().withMessage('PLEASE ENTER INR')];
 var createUserValidation = [body('name').notEmpty().withMessage('Name is required.'), body('phone').isMobilePhone().withMessage('Phone number is invalid.'), body('password').isLength({
   min: 6
 }).withMessage('Password must be at least 6 characters long.')];
@@ -14,5 +15,6 @@ module.exports = {
   createUserValidation: createUserValidation,
   loginUserValidation: loginUserValidation,
   trail: trail,
-  updatePassword: updatePassword
+  updatePassword: updatePassword,
+  razarPayValidations: razarPayValidations
 };

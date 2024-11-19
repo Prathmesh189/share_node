@@ -1,6 +1,14 @@
 const { body, validationResult } = require('express-validator');
 
 
+
+const razarPayValidations = [
+  body('amount').notEmpty().withMessage('amount must be entered'),
+  body('currency').notEmpty().withMessage('PLEASE ENTER INR'),
+
+];
+
+
 const createUserValidation = [
   body('name').notEmpty().withMessage('Name is required.'),
   body('phone').isMobilePhone().withMessage('Phone number is invalid.'),
@@ -26,5 +34,6 @@ module.exports = {
     createUserValidation,
     loginUserValidation,
     trail,
-    updatePassword
+    updatePassword,
+    razarPayValidations
   };

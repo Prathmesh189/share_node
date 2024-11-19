@@ -1,10 +1,6 @@
 const express = require('express');
-
 const app = express();
 const path = require('path');
-app.use(express.json());
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -18,6 +14,7 @@ const userRoutes = require('./routes/user_routes')
 const adminRoutes = require('./routes/admin_routes')
 const syallbus = require('./routes/syallabus_routes')
 const terms_condn = require('./routes/terms_condn')
+// const razarpay = require('./routes/razarpay')
 
 app.get('/' ,(req,res)=> {
     res.send({ status:"Running on server hit your endpoints"  });

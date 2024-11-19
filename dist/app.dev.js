@@ -7,7 +7,6 @@ var app = express();
 var path = require('path');
 
 app.use(express.json());
-app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
@@ -20,7 +19,8 @@ var adminRoutes = require('./routes/admin_routes');
 
 var syallbus = require('./routes/syallabus_routes');
 
-var terms_condn = require('./routes/terms_condn');
+var terms_condn = require('./routes/terms_condn'); // const razarpay = require('./routes/razarpay')
+
 
 app.get('/', function (req, res) {
   res.send({
