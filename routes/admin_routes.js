@@ -4,7 +4,7 @@ const adminDetailsController = require('../controllers/adminControllers');
 
 router.post('/adminDetails', adminDetailsController.createAdminDetail);
 
-router.put('/adminDetails/:id', adminDetailsController.updateAdminDetail);
+router.put('/ /:id', adminDetailsController.updateAdminDetail);
 
 router.get('/fetch/:id', adminDetailsController.getAdminDetailById);
 

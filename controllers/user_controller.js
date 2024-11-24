@@ -6,7 +6,7 @@ const { jwtSecret } = require('../config/auth');
 const axios = require('axios'); 
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID || '74300621506424';
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET || '7312ae27612b59036866ff3f1f69356b';
-
+const { Op } = require('sequelize');
 
 const loginWithFacebook = async (facebookToken) => {
     try {
@@ -67,28 +67,29 @@ const loginWithFacebook = async (facebookToken) => {
 
 
 
-
 const loginUser = async (req, res) => {
-
     try {
-        const { phone, Email, password } = req.body;
+        const { phone, password } = req.body; // Single parameter: identifier
 
-        console.log("Login attempt with phone/email:", phone, Email);
+        console.log("Login attempt with identifier:", phone);
 
-        if (!phone && !Email) {
-            return res.status(404).json({ status: 0, message: 'Phone number or email is required.' });
+        if (!phone) {
+            return res.status(404).json({ status: 0, message: 'Email or phone number is required.' });
         }
 
         if (!password) {
             return res.status(404).json({ status: 0, message: 'Password is required.' });
         }
 
-        let user;
-        if (Email) {
-            user = await users.findOne({ where: { Email } });
-        } else if (phone) {
-            user = await users.findOne({ where: { phone } });
-        }
+        // Check whether identifier is email or phone and search accordingly
+        const user = await users.findOne({
+            where: {
+                [Op.or]: [
+                    { Email: phone },
+                    { phone: phone },
+                ],
+            },
+        });
 
         if (!user) {
             return res.status(404).json({ status: 0, message: 'User not found with this email or phone number.' });
@@ -103,7 +104,7 @@ const loginUser = async (req, res) => {
         const token = jwt.sign(
             { id: user.id, phone: user.phone, email: user.email },
             jwtSecret,
-            { expiresIn: 31536000 } 
+            { expiresIn: 31536000 } // 1 year
         );
 
         res.status(200).json({
@@ -126,6 +127,7 @@ const loginUser = async (req, res) => {
         });
     }
 };
+
 
 
 
