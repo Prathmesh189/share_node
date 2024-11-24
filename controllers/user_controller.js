@@ -400,7 +400,7 @@ const editUserPassword = async (req, res) => {
 
         // Validate input
         if (!email || !phone || !name || !newPassword) {
-            return res.status(400).json({ status: 0, message: 'All fields (email, phone, name, newPassword) are required.' });
+            return res.status(200).json({ status: 0, message: 'All fields (email, phone, name, newPassword) are required.' });
         }
 
         // Find the user by email, phone, and name
@@ -413,7 +413,7 @@ const editUserPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(404).json({ status: 0, message: 'User not found with the provided email, phone, and name.' });
+            return res.status(200).json({ status: 0, message: 'User not found with the provided email, phone, and name.' });
         }
 
         // Hash the new password
