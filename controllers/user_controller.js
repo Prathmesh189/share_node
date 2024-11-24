@@ -394,9 +394,54 @@ const updatePassword = async (req, res) => {
     }
 };
 
+const editUserPassword = async (req, res) => {
+    try {
+        const { email, phone, name, newPassword } = req.body;
+
+        // Validate input
+        if (!email || !phone || !name || !newPassword) {
+            return res.status(400).json({ status: 0, message: 'All fields (email, phone, name, newPassword) are required.' });
+        }
+
+        // Find the user by email, phone, and name
+        const user = await users.findOne({
+            where: {
+                Email: email,
+                phone: phone,
+                name: name,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).json({ status: 0, message: 'User not found with the provided email, phone, and name.' });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the password
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).json({
+            status: 1,
+            message: 'Password updated successfully.',
+        });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).json({
+            status: 0,
+            message: 'Something went wrong',
+            error: error.message,
+        });
+    }
+};
+
+
 
 
 module.exports = {
+    editUserPassword,
     loginUser,
     createUser,
     updateUser,

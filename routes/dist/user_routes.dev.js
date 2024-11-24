@@ -86,7 +86,7 @@ router.post('/register', userController.createUser);
 router.post('/login', validations.loginUserValidation, userController.loginUser);
 router.get('/details', authenticateJWT, userController.getUserInfo);
 router.put('/update', authenticateJWT, userController.updateUser);
-router.patch('/resetPassword', validations.updatePassword, userController.updatePassword);
+router.put('/resetPassword', validations.updatePassword, userController.editUserPassword);
 router.post('/login/facebook', function _callee2(req, res) {
   var facebookToken, response;
   return regeneratorRuntime.async(function _callee2$(_context2) {
