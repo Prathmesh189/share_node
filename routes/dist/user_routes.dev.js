@@ -34,7 +34,7 @@ router.get("/fetch-orders", function _callee(req, res) {
         case 0:
           allOrders = [];
           skip = 0;
-          limit = 500;
+          limit = 100;
           _context.prev = 3;
 
         case 4:

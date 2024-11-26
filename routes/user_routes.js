@@ -17,7 +17,7 @@ const razorpay = new Razorpay({
   router.get("/fetch-orders", async (req, res) => {
     let allOrders = [];
     let skip = 0;
-    const limit = 500; 
+    const limit = 100; 
     try {
       // Loop to fetch all orders by incrementing the skip parameter
       while (true) {
