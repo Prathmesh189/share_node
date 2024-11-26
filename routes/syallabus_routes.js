@@ -35,7 +35,6 @@ router.put(
 
 router.post('/createLink', createSyllabusbyLinks);
 
-
 router.get('/get', getAllSyllabi);
 
 router.get('/begginer/:course_id', getByCourse);

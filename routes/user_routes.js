@@ -14,32 +14,54 @@ const razorpay = new Razorpay({
   });
   
 
-  router.post('/create-order',  async (req, res) => {
-    const { amount } = req.body;
+  router.get("/fetch-orders", async (req, res) => {
+    try {
+      const orders = await razorpay.orders.all({
+        expand: ["payments"], // Expands the payments field
+      });
   
-    // Input validation
-    if (!amount ) {
-      return res.status(400).json({ status:0, message: "Amount  are required." });
+      res.status(200).json({ status: 1, orders });
+    } catch (error) {
+      console.error("Error fetching Razorpay orders:", error);
+      res.status(500).json({ status: 0, message: error.message });
+    }
+  });
+
+
+
+  router.post('/create-order', async (req, res) => {
+    const { amount, name, phone } = req.body; 
+  
+    // Input validation for amount
+    if (!amount) {
+      return res.status(400).json({ status: 0, message: "Amount is required." });
     }
   
     if (isNaN(amount) || amount <= 0) {
-      return res.status(400).json({ status:0,message: "Invalid amount." });
+      return res.status(400).json({ status: 0, message: "Invalid amount." });
     }
   
-   
     try {
+      // Prepare notes object only if name or phone is provided
+      const notes = {};
+      if (name) notes.name = name;
+      if (phone) notes.phone = phone;
+  
+      // Create Razorpay order
       const order = await razorpay.orders.create({
-        amount: amount * 100,
+        amount: amount * 100, // Convert to the smallest currency unit
         currency: "INR",
         receipt: `receipt_${Math.random()}`,
+        notes: Object.keys(notes).length ? notes : undefined, 
       });
   
-      res.status(200).json({status:1,order});
+      res.status(200).json({ status: 1, order });
     } catch (error) {
-      console.error("Error creating Razorpay order:", error); // Log the error for debugging
-      res.status(500).json({ message: error.message });
+      console.error("Error creating Razorpay order:", error);
+      res.status(500).json({ status: 0, message: error.message });
     }
   });
+  
 
   
 router.put('/uploadProfileImage',authenticateJWT, upload.single('profile_pic'),validations.trail,userController.uploadProfileImage);
