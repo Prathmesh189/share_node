@@ -19,7 +19,6 @@ const razorpay = new Razorpay({
     let skip = 0;
     const limit = 100; 
     try {
-      // Loop to fetch all orders by incrementing the skip parameter
       while (true) {
         const orders = await razorpay.orders.all({
           expand: ["payments"],
@@ -39,6 +38,22 @@ const razorpay = new Razorpay({
       res.status(200).json({ status: 1, orders: allOrders });
     } catch (error) {
       console.error("Error fetching Razorpay orders:", error);
+      res.status(500).json({ status: 0, message: error.message });
+    }
+  });
+  
+  router.post('/capture-payment', async (req, res) => {
+    const { payment_id, amount } = req.body;
+  
+    if (!payment_id || !amount) {
+      return res.status(400).json({ status: 0, message: "Payment ID and amount are required." });
+    }
+  
+    try {
+      const response = await razorpay.payments.capture(payment_id, amount);
+      res.status(200).json({ status: 1, message: "Payment captured successfully", data: response });
+    } catch (error) {
+      console.error("Error capturing payment:", error);
       res.status(500).json({ status: 0, message: error.message });
     }
   });

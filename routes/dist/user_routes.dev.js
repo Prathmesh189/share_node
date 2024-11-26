@@ -92,44 +92,94 @@ router.get("/fetch-orders", function _callee(req, res) {
     }
   }, null, null, [[3, 17]]);
 });
-router.post('/create-order', function _callee2(req, res) {
-  var _req$body, amount, name, phone, notes, order;
+router.post('/capture-payment', function _callee2(req, res) {
+  var _req$body, payment_id, amount, response;
 
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
-          _req$body = req.body, amount = _req$body.amount, name = _req$body.name, phone = _req$body.phone; // Input validation for amount
+          _req$body = req.body, payment_id = _req$body.payment_id, amount = _req$body.amount;
 
-          if (amount) {
+          if (!(!payment_id || !amount)) {
             _context2.next = 3;
             break;
           }
 
           return _context2.abrupt("return", res.status(400).json({
             status: 0,
+            message: "Payment ID and amount are required."
+          }));
+
+        case 3:
+          _context2.prev = 3;
+          _context2.next = 6;
+          return regeneratorRuntime.awrap(razorpay.payments.capture(payment_id, amount));
+
+        case 6:
+          response = _context2.sent;
+          res.status(200).json({
+            status: 1,
+            message: "Payment captured successfully",
+            data: response
+          });
+          _context2.next = 14;
+          break;
+
+        case 10:
+          _context2.prev = 10;
+          _context2.t0 = _context2["catch"](3);
+          console.error("Error capturing payment:", _context2.t0);
+          res.status(500).json({
+            status: 0,
+            message: _context2.t0.message
+          });
+
+        case 14:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  }, null, null, [[3, 10]]);
+});
+router.post('/create-order', function _callee3(req, res) {
+  var _req$body2, amount, name, phone, notes, order;
+
+  return regeneratorRuntime.async(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          _req$body2 = req.body, amount = _req$body2.amount, name = _req$body2.name, phone = _req$body2.phone; // Input validation for amount
+
+          if (amount) {
+            _context3.next = 3;
+            break;
+          }
+
+          return _context3.abrupt("return", res.status(400).json({
+            status: 0,
             message: "Amount is required."
           }));
 
         case 3:
           if (!(isNaN(amount) || amount <= 0)) {
-            _context2.next = 5;
+            _context3.next = 5;
             break;
           }
 
-          return _context2.abrupt("return", res.status(400).json({
+          return _context3.abrupt("return", res.status(400).json({
             status: 0,
             message: "Invalid amount."
           }));
 
         case 5:
-          _context2.prev = 5;
+          _context3.prev = 5;
           // Prepare notes object only if name or phone is provided
           notes = {};
           if (name) notes.name = name;
           if (phone) notes.phone = phone; // Create Razorpay order
 
-          _context2.next = 11;
+          _context3.next = 11;
           return regeneratorRuntime.awrap(razorpay.orders.create({
             amount: amount * 100,
             // Convert to the smallest currency unit
@@ -139,26 +189,26 @@ router.post('/create-order', function _callee2(req, res) {
           }));
 
         case 11:
-          order = _context2.sent;
+          order = _context3.sent;
           res.status(200).json({
             status: 1,
             order: order
           });
-          _context2.next = 19;
+          _context3.next = 19;
           break;
 
         case 15:
-          _context2.prev = 15;
-          _context2.t0 = _context2["catch"](5);
-          console.error("Error creating Razorpay order:", _context2.t0);
+          _context3.prev = 15;
+          _context3.t0 = _context3["catch"](5);
+          console.error("Error creating Razorpay order:", _context3.t0);
           res.status(500).json({
             status: 0,
-            message: _context2.t0.message
+            message: _context3.t0.message
           });
 
         case 19:
         case "end":
-          return _context2.stop();
+          return _context3.stop();
       }
     }
   }, null, null, [[5, 15]]);
@@ -169,35 +219,35 @@ router.post('/login', validations.loginUserValidation, userController.loginUser)
 router.get('/details', authenticateJWT, userController.getUserInfo);
 router.put('/update', authenticateJWT, userController.updateUser);
 router.put('/resetPassword', validations.updatePassword, userController.editUserPassword);
-router.post('/login/facebook', function _callee3(req, res) {
+router.post('/login/facebook', function _callee4(req, res) {
   var facebookToken, response;
-  return regeneratorRuntime.async(function _callee3$(_context3) {
+  return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
-      switch (_context3.prev = _context3.next) {
+      switch (_context4.prev = _context4.next) {
         case 0:
           facebookToken = req.body.facebookToken;
 
           if (facebookToken) {
-            _context3.next = 3;
+            _context4.next = 3;
             break;
           }
 
-          return _context3.abrupt("return", res.status(400).json({
+          return _context4.abrupt("return", res.status(400).json({
             status: 0,
             message: 'Facebook token is required.'
           }));
 
         case 3:
-          _context3.next = 5;
+          _context4.next = 5;
           return regeneratorRuntime.awrap(userController.loginWithFacebook(facebookToken));
 
         case 5:
-          response = _context3.sent;
-          return _context3.abrupt("return", res.status(response.status === 1 ? 200 : 400).json(response));
+          response = _context4.sent;
+          return _context4.abrupt("return", res.status(response.status === 1 ? 200 : 400).json(response));
 
         case 7:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
     }
   });
