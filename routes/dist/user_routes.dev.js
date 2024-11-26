@@ -1,5 +1,13 @@
 "use strict";
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 var express = require('express');
 
 var userController = require('../controllers/user_controller');
@@ -19,42 +27,70 @@ var razorpay = new Razorpay({
   key_secret: 'rPTGdf5UWXdfuwT3g84W34Zy'
 });
 router.get("/fetch-orders", function _callee(req, res) {
-  var orders;
+  var allOrders, skip, limit, orders;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          _context.prev = 0;
-          _context.next = 3;
-          return regeneratorRuntime.awrap(razorpay.orders.all({
-            expand: ["payments"] // Expands the payments field
+          allOrders = [];
+          skip = 0;
+          limit = 500;
+          _context.prev = 3;
 
+        case 4:
+          if (!true) {
+            _context.next = 14;
+            break;
+          }
+
+          _context.next = 7;
+          return regeneratorRuntime.awrap(razorpay.orders.all({
+            expand: ["payments"],
+            count: limit,
+            skip: skip
           }));
 
-        case 3:
+        case 7:
           orders = _context.sent;
-          res.status(200).json({
-            status: 1,
-            orders: orders
-          });
-          _context.next = 11;
+
+          if (!(orders.items.length === 0)) {
+            _context.next = 10;
+            break;
+          }
+
+          return _context.abrupt("break", 14);
+
+        case 10:
+          allOrders = [].concat(_toConsumableArray(allOrders), _toConsumableArray(orders.items)); // Append fetched orders
+
+          skip += limit; // Increment skip by the limit to fetch the next set of orders
+
+          _context.next = 4;
           break;
 
-        case 7:
-          _context.prev = 7;
-          _context.t0 = _context["catch"](0);
+        case 14:
+          res.status(200).json({
+            status: 1,
+            orders: allOrders
+          });
+          _context.next = 21;
+          break;
+
+        case 17:
+          _context.prev = 17;
+          _context.t0 = _context["catch"](3);
           console.error("Error fetching Razorpay orders:", _context.t0);
           res.status(500).json({
             status: 0,
             message: _context.t0.message
           });
 
-        case 11:
+        case 21:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[0, 7]]);
+  }, null, null, [[3, 17]]);
 });
 router.post('/create-order', function _callee2(req, res) {
   var _req$body, amount, name, phone, notes, order;

@@ -15,17 +15,34 @@ const razorpay = new Razorpay({
   
 
   router.get("/fetch-orders", async (req, res) => {
+    let allOrders = [];
+    let skip = 0;
+    const limit = 500; 
     try {
-      const orders = await razorpay.orders.all({
-        expand: ["payments"], // Expands the payments field
-      });
+      // Loop to fetch all orders by incrementing the skip parameter
+      while (true) {
+        const orders = await razorpay.orders.all({
+          expand: ["payments"],
+          count: limit,
+          skip: skip,
+        });
   
-      res.status(200).json({ status: 1, orders });
+        // Break the loop if no more orders are available
+        if (orders.items.length === 0) {
+          break;
+        }
+  
+        allOrders = [...allOrders, ...orders.items]; // Append fetched orders
+        skip += limit; // Increment skip by the limit to fetch the next set of orders
+      }
+  
+      res.status(200).json({ status: 1, orders: allOrders });
     } catch (error) {
       console.error("Error fetching Razorpay orders:", error);
       res.status(500).json({ status: 0, message: error.message });
     }
   });
+  
 
 
 
