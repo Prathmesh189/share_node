@@ -106,7 +106,7 @@ router.post('/capture-payment', function _callee2(req, res) {
             break;
           }
 
-          return _context2.abrupt("return", res.status(400).json({
+          return _context2.abrupt("return", res.status(200).json({
             status: 0,
             message: "Payment ID and amount are required."
           }));
@@ -120,8 +120,7 @@ router.post('/capture-payment', function _callee2(req, res) {
           response = _context2.sent;
           res.status(200).json({
             status: 1,
-            message: "Payment captured successfully",
-            data: response
+            message: "Payment captured successfully"
           });
           _context2.next = 14;
           break;

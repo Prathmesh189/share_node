@@ -42,16 +42,17 @@ const razorpay = new Razorpay({
     }
   });
   
+   
   router.post('/capture-payment', async (req, res) => {
     const { payment_id, amount } = req.body;
   
     if (!payment_id || !amount) {
-      return res.status(400).json({ status: 0, message: "Payment ID and amount are required." });
+      return res.status(200).json({ status: 0, message: "Payment ID and amount are required." });
     }
   
     try {
       const response = await razorpay.payments.capture(payment_id, amount);
-      res.status(200).json({ status: 1, message: "Payment captured successfully", data: response });
+      res.status(200).json({ status: 1, message: "Payment captured successfully" });
     } catch (error) {
       console.error("Error capturing payment:", error);
       res.status(500).json({ status: 0, message: error.message });
