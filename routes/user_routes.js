@@ -48,7 +48,6 @@ const razorpay = new Razorpay({
     if (!payment_id || !amount) {
       return res.status(200).json({ status: 0, message: "Payment ID and amount are required." });
     }
-    console.error(payment_id, amount);
   
     try {
       const response = await razorpay.payments.capture(payment_id, amount);

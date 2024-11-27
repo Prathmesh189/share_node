@@ -110,35 +110,34 @@ router.post('/capture-payment', function _callee2(req, res) {
           }));
 
         case 3:
-          console.error(payment_id, amount);
-          _context2.prev = 4;
-          _context2.next = 7;
+          _context2.prev = 3;
+          _context2.next = 6;
           return regeneratorRuntime.awrap(razorpay.payments.capture(payment_id, amount));
 
-        case 7:
+        case 6:
           response = _context2.sent;
           res.status(200).json({
             status: 1,
             message: "Payment captured successfully"
           });
-          _context2.next = 15;
+          _context2.next = 14;
           break;
 
-        case 11:
-          _context2.prev = 11;
-          _context2.t0 = _context2["catch"](4);
+        case 10:
+          _context2.prev = 10;
+          _context2.t0 = _context2["catch"](3);
           console.error("Error capturing payment:", _context2.t0);
           res.status(500).json({
             status: 0,
             message: _context2.t0.message
           });
 
-        case 15:
+        case 14:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[4, 11]]);
+  }, null, null, [[3, 10]]);
 });
 router.post('/create-order', function _callee3(req, res) {
   var _req$body2, amount, name, phone, notes, order;
