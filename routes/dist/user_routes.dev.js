@@ -126,7 +126,7 @@ router.post('/capture-payment', function _callee2(req, res) {
         case 10:
           _context2.prev = 10;
           _context2.t0 = _context2["catch"](3);
-          console.error("Error capturing payment:", _context2.t0);
+          console.error("Error capturing payment:");
           res.status(500).json({
             status: 0,
             message: _context2.t0.message
