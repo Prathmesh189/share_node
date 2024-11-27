@@ -23,8 +23,8 @@ var upload = require('../config/multer_config');
 var Razorpay = require('razorpay');
 
 var razorpay = new Razorpay({
-  key_id: 'rzp_live_lqs33u56ZnIKV1',
-  key_secret: 'rPTGdf5UWXdfuwT3g84W34Zy'
+  key_id: 'rzp_live_uCJa7uLdh77Q0D',
+  key_secret: 'dIXXp5oxJVo70K0LpyF8BHCN'
 });
 router.get("/fetch-orders", function _callee(req, res) {
   var allOrders, skip, limit, orders;
@@ -79,7 +79,7 @@ router.get("/fetch-orders", function _callee(req, res) {
         case 17:
           _context.prev = 17;
           _context.t0 = _context["catch"](3);
-          console.error("Error fetching Razorpay orders:", _context.t0);
+          console.error("Error fetching Razorpay orders:", _context.t0, "\n \n");
           res.status(500).json({
             status: 0,
             message: _context.t0.message

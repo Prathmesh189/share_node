@@ -9,8 +9,8 @@ const Razorpay = require('razorpay');
 
 
 const razorpay = new Razorpay({
-    key_id: 'rzp_live_lqs33u56ZnIKV1',
-    key_secret: 'rPTGdf5UWXdfuwT3g84W34Zy', 
+    key_id: 'rzp_live_uCJa7uLdh77Q0D',
+    key_secret: 'dIXXp5oxJVo70K0LpyF8BHCN', 
   });
   
 
@@ -37,7 +37,7 @@ const razorpay = new Razorpay({
   
       res.status(200).json({ status: 1, orders: allOrders });
     } catch (error) {
-      console.error("Error fetching Razorpay orders:", error);
+      console.error("Error fetching Razorpay orders:", error ,`\n \n`);
       res.status(500).json({ status: 0, message: error.message });
     }
   });
