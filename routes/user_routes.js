@@ -26,13 +26,13 @@ const razorpay = new Razorpay({
           skip: skip,
         });
   
-        // Break the loop if no more orders are available
+       
         if (orders.items.length === 0) {
           break;
         }
   
-        allOrders = [...allOrders, ...orders.items]; // Append fetched orders
-        skip += limit; // Increment skip by the limit to fetch the next set of orders
+        allOrders = [...allOrders, ...orders.items]; 
+        skip += limit; 
       }
   
       res.status(200).json({ status: 1, orders: allOrders });
@@ -45,10 +45,10 @@ const razorpay = new Razorpay({
    
   router.post('/capture-payment', async (req, res) => {
     const { payment_id, amount } = req.body;
-  
     if (!payment_id || !amount) {
       return res.status(200).json({ status: 0, message: "Payment ID and amount are required." });
     }
+    console.error(payment_id, amount);
   
     try {
       const response = await razorpay.payments.capture(payment_id, amount);

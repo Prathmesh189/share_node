@@ -61,10 +61,8 @@ router.get("/fetch-orders", function _callee(req, res) {
           return _context.abrupt("break", 14);
 
         case 10:
-          allOrders = [].concat(_toConsumableArray(allOrders), _toConsumableArray(orders.items)); // Append fetched orders
-
-          skip += limit; // Increment skip by the limit to fetch the next set of orders
-
+          allOrders = [].concat(_toConsumableArray(allOrders), _toConsumableArray(orders.items));
+          skip += limit;
           _context.next = 4;
           break;
 
@@ -112,34 +110,35 @@ router.post('/capture-payment', function _callee2(req, res) {
           }));
 
         case 3:
-          _context2.prev = 3;
-          _context2.next = 6;
+          console.error(payment_id, amount);
+          _context2.prev = 4;
+          _context2.next = 7;
           return regeneratorRuntime.awrap(razorpay.payments.capture(payment_id, amount));
 
-        case 6:
+        case 7:
           response = _context2.sent;
           res.status(200).json({
             status: 1,
             message: "Payment captured successfully"
           });
-          _context2.next = 14;
+          _context2.next = 15;
           break;
 
-        case 10:
-          _context2.prev = 10;
-          _context2.t0 = _context2["catch"](3);
+        case 11:
+          _context2.prev = 11;
+          _context2.t0 = _context2["catch"](4);
           console.error("Error capturing payment:", _context2.t0);
           res.status(500).json({
             status: 0,
             message: _context2.t0.message
           });
 
-        case 14:
+        case 15:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[3, 10]]);
+  }, null, null, [[4, 11]]);
 });
 router.post('/create-order', function _callee3(req, res) {
   var _req$body2, amount, name, phone, notes, order;
